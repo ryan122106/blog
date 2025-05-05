@@ -1,5 +1,5 @@
 
-<?php require "../parts/header.php"; ?>
+<?php require "parts/header.php"; ?>
 
     <div class="container mx-auto my-5" style="max-width: 800px;">
       <h1 class="h1 mb-4 text-center">Dashboard</h1>
@@ -14,7 +14,7 @@
                 Manage Posts
               </h5>
               <div class="text-center mt-3">
-                <a href="/" class="btn btn-primary btn-sm"
+                <a href="manage-post" class="btn btn-primary btn-sm"
                   >Access</a
                 >
               </div>
@@ -31,7 +31,7 @@
                 Manage Users
               </h5>
               <div class="text-center mt-3">
-                <a href="manage-users.html" class="btn btn-primary btn-sm"
+                <a href="manage-user" class="btn btn-primary btn-sm"
                   >Access</a
                 >
               </div>
@@ -40,11 +40,25 @@
         </div>
       </div>
       <div class="mt-4 text-center">
-        <a href="index.html" class="btn btn-link btn-sm"
+        <a href="/dashboard" class="btn btn-link btn-sm"
           ><i class="bi bi-arrow-left"></i> Back</a
         >
       </div>
     </div>
 
-    <?php require "../parts/footer.php"; ?>
+
+    <?php if( isset($_SESSION["user"]) ) : ?> 
+          <p class="text-center">Hello,<?= $_SESSION["user"]["name"];?></p>
+        <div class="text-center">
+          <a href="/logout">Logout</a>
+        </div>
+        <?php else:?>
+          <div class="text-center">
+            <a href="/login">Login</a>
+            <hr>
+            <a href="/signup">Sign Up</a>
+          </div>
+          <?php endif ;?>
+
+    <?php require "parts/footer.php"; ?>
 

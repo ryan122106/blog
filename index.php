@@ -17,13 +17,29 @@ switch ($path) {
   case '/logout';
   require "pages/logout.php";
   break;
-
   case '/dashboard';
   require "pages/dashboard.php";
   break;
-  
+  case '/manage-post-edit';
+  require "pages/manage_post_edit.php";
+  break;
   case '/read_more';
   require "pages/read_more.php";
+  break;
+  case '/manage-post';
+  require "pages/manage_post.php";
+  break;
+  case '/manage-user';
+  require "pages/manage_user.php";
+  break;
+  case '/manage-user-add';
+  require "pages/manage_user_add.php";
+  break;
+  case '/manage-user-edit';
+  require "pages/manage_user_edit.php";
+  break;
+  case '/manage-pwd';
+  require "pages/manage_user_changepwd.php";
   break;
 
 
