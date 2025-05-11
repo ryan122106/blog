@@ -1,3 +1,12 @@
+<?php
+
+  // check if the user is not an admin
+  if ( !isAdmin() ) {
+    header("Location: /dashboard");
+    exit;
+  }
+
+?>
 <?php require "parts/header.php"; ?>
 
 <div class="container mx-auto my-5" style="max-width: 700px;">

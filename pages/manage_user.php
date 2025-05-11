@@ -1,4 +1,10 @@
 <?php
+  // check if the user is not an admin
+  if ( !isAdmin() ) {
+    header("Location: /dashboard");
+    exit;
+  }
+
   // 1. connect to database
   $database = connectToDB();
   // 2. get all the users

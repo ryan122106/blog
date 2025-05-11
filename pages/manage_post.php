@@ -1,3 +1,23 @@
+<?php
+  // check if the user is not an admin
+  if ( !isAdmin() ) {
+    header("Location: /dashboard");
+    exit;
+  }
+
+  // 1. connect to database
+  $database = connectToDB();
+  // 2. get all the posts
+  // 2.1
+  $sql = "SELECT * FROM posts";
+  // 2.2
+  $query = $database->query( $sql );
+  // 2.3
+  $query->execute();
+  // 2.4
+  $posts = $query->fetchAll();
+?>
+
 <?php require "parts/header.php"; ?>
 
 <div class="container mx-auto my-5" style="max-width: 700px;">
@@ -10,6 +30,7 @@
         </div>
       </div>
       <div class="card mb-2 p-4">
+        <?php require "parts/message_success.php"; ?>
         <table class="table">
           <thead>
             <tr>
@@ -20,121 +41,68 @@
             </tr>
           </thead>
           <tbody>
+            <?php foreach ($posts as $index => $post) : ?>
             <tr>
-              <th scope="row">5</th>
-              <td>Post 5</td>
-              <td><span class="badge bg-warning">Pending Review</span></td>
-              <td class="text-end">
-                <div class="buttons">
-                  <a
-                    href="/post"
-                    target="_blank"
-                    class="btn btn-primary btn-sm me-2 disabled"
-                    ><i class="bi bi-eye"></i
-                  ></a>
-                  <a
-                    href="/manage-posts-edit"
-                    class="btn btn-secondary btn-sm me-2"
-                    ><i class="bi bi-pencil"></i
-                  ></a>
-                  <a href="#" class="btn btn-danger btn-sm"
-                    ><i class="bi bi-trash"></i
-                  ></a>
-                </div>
+              <th scope="row"><?php echo $index + 1?></th>
+              <td><?= $post['title']; ?></td>
+              <td>
+                <?php if ( $post['status'] === 'published' ) : ?>
+                  <span class="badge bg-success"><?= $post['status']; ?></span>
+                <?php elseif ( $post['status'] === 'pending' ) : ?>
+                  <span class="badge bg-warning">Pending Review</span>
+                <?php else : ?>
+                  <span class="badge bg-secondary"><?= $post['status']; ?></span>
+                <?php endif; ?>
               </td>
-            </tr>
-            <tr>
-              <th scope="row">4</th>
-              <td>Post 4</td>
-              <td><span class="badge bg-success">Publish</span></td>
               <td class="text-end">
                 <div class="buttons">
                   <a
-                    href="/post"
+                    href="/post?id=<?= $post['id']; ?>"
                     target="_blank"
                     class="btn btn-primary btn-sm me-2"
                     ><i class="bi bi-eye"></i
                   ></a>
                   <a
-                    href="/manage-posts-edit"
+                    href="/manage-posts-edit?id=<?= $post['id']; ?>"
                     class="btn btn-secondary btn-sm me-2"
                     ><i class="bi bi-pencil"></i
                   ></a>
-                  <a href="#" class="btn btn-danger btn-sm"
-                    ><i class="bi bi-trash"></i
-                  ></a>
+                  <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#postDeleteModal-<?= $post['id']; ?>" >
+                    <i class="bi bi-trash"></i>
+                  </button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" id="postDeleteModal-<?= $post['id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure you want to delete this post?</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-start">
+                          <p>You're currently trying to delete this post: <?= $post['title']; ?></p>
+                          <p>This action cannot be reversed.</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <form
+                            method="POST"
+                            action="/post/delete"
+                            class="d-inline"
+                          >
+                            <input type="hidden" 
+                                name="post_id"
+                                value="<?= $post["id"]; ?>" />
+                            <button class="btn btn-danger"><i class="bi bi-trash me-2"></i>DELETE</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </td>
             </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>Post 3</td>
-              <td><span class="badge bg-success">Publish</span></td>
-              <td class="text-end">
-                <div class="buttons">
-                  <a
-                    href="/post"
-                    target="_blank"
-                    class="btn btn-primary btn-sm me-2"
-                    ><i class="bi bi-eye"></i
-                  ></a>
-                  <a
-                    href="/manage-posts-edit"
-                    class="btn btn-secondary btn-sm me-2"
-                    ><i class="bi bi-pencil"></i
-                  ></a>
-                  <a href="#" class="btn btn-danger btn-sm"
-                    ><i class="bi bi-trash"></i
-                  ></a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Post 2</td>
-              <td><span class="badge bg-success">Publish</span></td>
-              <td class="text-end">
-                <div class="buttons">
-                  <a
-                    href="/post"
-                    target="_blank"
-                    class="btn btn-primary btn-sm me-2"
-                    ><i class="bi bi-eye"></i
-                  ></a>
-                  <a
-                    href="/manage-posts-edit"
-                    class="btn btn-secondary btn-sm me-2"
-                    ><i class="bi bi-pencil"></i
-                  ></a>
-                  <a href="#" class="btn btn-danger btn-sm"
-                    ><i class="bi bi-trash"></i
-                  ></a>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">1</th>
-              <td>Post 1</td>
-              <td><span class="badge bg-success">Publish</span></td>
-              <td class="text-end">
-                <div class="buttons">
-                  <a
-                    href="/post"
-                    target="_blank"
-                    class="btn btn-primary btn-sm me-2"
-                    ><i class="bi bi-eye"></i
-                  ></a>
-                  <a
-                    href="/manage-posts-edit"
-                    class="btn btn-secondary btn-sm me-2"
-                    ><i class="bi bi-pencil"></i
-                  ></a>
-                  <a href="#" class="btn btn-danger btn-sm"
-                    ><i class="bi bi-trash"></i
-                  ></a>
-                </div>
-              </td>
-            </tr>
+            <?php endforeach; ?>
           </tbody>
         </table>
       </div>

@@ -50,6 +50,16 @@
       case "/manage-posts-edit":
         require "pages/manage_post_edit.php";
         break;
+      case '/post/add':
+        require "includes/user/post_add.php";
+        break;
+        case '/post/delete':
+          require "includes/user/post_delete.php";
+          break;
+          case '/post/update':
+            require "includes/user/update_post.php";
+            break;
+         
         
       // actions routes
       case '/auth/login':
@@ -72,6 +82,7 @@
       case '/user/delete':
         require "includes/user/delete.php";
         break;
+      
 
       default:
         require "pages/home.php";

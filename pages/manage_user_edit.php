@@ -1,5 +1,11 @@
 <?php
 
+  // check if the user is not an admin
+  if ( !isAdmin() ) {
+    header("Location: /dashboard");
+    exit;
+  }
+
   // connect to database
   $database = connectToDB();
 
