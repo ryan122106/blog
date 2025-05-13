@@ -1,14 +1,3 @@
-<?php
-
-  // check if the user is not logged in or not an editor/admin
-  if ( !isEditor() && !isAdmin() ) {
-    header("Location: /dashboard");
-    exit;
-  }
-  
-
-?>
-
 <?php require "parts/header.php"; ?>
 
 <div class="container mx-auto my-5" style="max-width: 700px;">
@@ -16,27 +5,19 @@
         <h1 class="h1">Add New Post</h1>
       </div>
       <div class="card mb-2 p-4">
-          <!--
-              1. form method and action
-              2. field names
-              3. display error message
-          -->
-          <form method="POST" action="/post/add">
-          <!-- display success message -->
-          <?php require "parts/message_success.php"; ?>
-          <!-- display error message -->
-          <?php require "parts/message_error.php"; ?>  
+        <?php require "parts/message_error.php"; ?>
+        <form method="POST" action="/post/add">
           <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" name="title" />
+            <label for="post-title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="post-title" name="title" />
           </div>
           <div class="mb-3">
-            <label for="content" class="form-label">Content</label>
+            <label for="post-content" class="form-label">Content</label>
             <textarea
               class="form-control"
-              id="content"
-              name="content"
+              id="post-content"
               rows="10"
+              name="content"
             ></textarea>
           </div>
           <div class="text-end">

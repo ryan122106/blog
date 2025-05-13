@@ -1,4 +1,5 @@
 <?php
+
   // connect to database
   $database = connectToDB();
 
@@ -9,7 +10,7 @@
   // SQL
   $sql = "SELECT * FROM posts WHERE id = :id";
   // prepare
-  $query = $database->prepare($sql);
+  $query = $database->prepare( $sql );
   // execute
   $query->execute([
     "id" => $id
@@ -17,11 +18,6 @@
   // fetch
   $post = $query->fetch(); // get only the first row of the match data
 
-  /*
-    title -> $post["title"]
-    content -> $post["content"]
-    status -> $post["status"]
-  */
 ?>
 <?php require "parts/header.php"; ?>
 
@@ -30,34 +26,30 @@
         <h1 class="h1">Edit Post</h1>
       </div>
       <div class="card mb-2 p-4">
+        <?php require "parts/message_error.php"; ?>
         <form method="POST" action="/post/update">
           <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input 
-              type="text" 
-              class="form-control" 
-              id="title" 
-              name="title" 
-              value="<?php echo $post["title"]; ?>" 
+            <label for="post-title" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="post-title"
+              value="<?= $post["title"]; ?>"
+              name="title"
             />
           </div>
           <div class="mb-3">
-            <label for="content" class="form-label">Content</label>
-            <textarea 
-              class="form-control" 
-              id="content" 
-              name="content" 
-              rows="10"
-            ><?php echo $post["content"]; ?></textarea>
+            <label for="post-content" class="form-label">Content</label>
+            <textarea class="form-control" id="post-content" rows="10" name="content" ><?= $post["content"]; ?></textarea>
           </div>
           <div class="mb-3">
-            <label for="status" class="form-label">Status</label>
-            <select class="form-control" id="status" name="status">
-              <option value="review" <?php echo ($post["status"] === "review" ? "selected" : ""); ?>>Pending for Review</option>
-              <option value="publish" <?php echo ($post["status"] === "publish" ? "selected" : ""); ?>>Publish</option>
+            <label for="post-content" class="form-label">Status</label>
+            <select class="form-control" id="post-status" name="status">
+              <option value="pending" <?php echo ( $post["status"] === "pending" ? "selected" : "" ); ?>>Pending for Review</option>
+              <option value="publish" <?php echo ( $post["status"] === "publish" ? "selected" : "" ); ?>>Publish</option>
             </select>
           </div>
-          <div class="d-grid">
+          <div class="text-end">
             <input type="hidden" name="id" value="<?php echo $post["id"]; ?>" />
             <button type="submit" class="btn btn-primary">Update</button>
           </div>
