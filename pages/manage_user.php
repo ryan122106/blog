@@ -11,7 +11,7 @@
     // 2.1
   $sql = "SELECT * FROM users";
   // 2.2
-  $query = $database->query( $sql );
+  $query = $database->prepare( $sql );
   // 2.3
   $query->execute();
   // 2.4

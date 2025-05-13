@@ -1,25 +1,33 @@
 <?php
-  // check if the user is not an admin
-  if ( !isAdmin() ) {
-    header("Location: /dashboard");
-    exit;
+
+  $database = connectToDB();
+
+  /*
+    use ORDER BY to sort by column
+    use ASC to sort by ascending order (lowest value first)
+    use DESC tp sort by descending order (highest value first)
+  */
+  $user_id = $_SESSION["user"]["id"];
+  /*
+    use WHERE to filter by user_id
+  */
+  if ( isEditor() ) {
+    // no filter for admin or editor
+    $sql = "SELECT * FROM posts ORDER BY id DESC";
+    $query = $database->prepare( $sql );
+    $query->execute();
+  } else {
+    // filter by user_id for normal user
+    $sql = "SELECT * FROM posts WHERE user_id = :user_id ORDER BY id DESC";
+    $query = $database->prepare( $sql );
+    $query->execute([
+      "user_id" => $user_id
+    ]);
   }
 
-  // 1. connect to database
-  $database = connectToDB();
-  // 2. get all the posts
-  // 2.1
-  $sql = "SELECT * FROM posts";
-  // 2.2
-  $query = $database->query( $sql );
-  // 2.3
-  $query->execute();
-  // 2.4
   $posts = $query->fetchAll();
 ?>
-
 <?php require "parts/header.php"; ?>
-
 <div class="container mx-auto my-5" style="max-width: 700px;">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h1 class="h1">Manage Posts</h1>
@@ -41,38 +49,35 @@
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($posts as $index => $post) : ?>
+          <?php foreach( $posts as $post ) : ?>
             <tr>
-              <th scope="row"><?php echo $index + 1?></th>
-              <td><?= $post['title']; ?></td>
-              <td>
-                <?php if ( $post['status'] === 'published' ) : ?>
-                  <span class="badge bg-success"><?= $post['status']; ?></span>
-                <?php elseif ( $post['status'] === 'pending' ) : ?>
-                  <span class="badge bg-warning">Pending Review</span>
-                <?php else : ?>
-                  <span class="badge bg-secondary"><?= $post['status']; ?></span>
-                <?php endif; ?>
-              </td>
+              <th scope="row"><?= $post["id"]; ?></th>
+              <td><?= $post["title"]; ?></td>
+              <?php if ( $post["status"] === 'pending' ) : ?>
+                <td><span class="badge bg-warning">Pending Review</span></td>
+              <?php else: ?>
+                <td><span class="badge bg-success">Publish</span></td>
+              <?php endif; ?>
               <td class="text-end">
                 <div class="buttons">
                   <a
-                    href="/post?id=<?= $post['id']; ?>"
+                    href="/post?id=<?= $post["id"]; ?>"
                     target="_blank"
-                    class="btn btn-primary btn-sm me-2"
+                    class="btn btn-primary btn-sm me-2 <?php echo ( $post["status"] === 'pending' ? "disabled" : "" ); ?>"
                     ><i class="bi bi-eye"></i
                   ></a>
                   <a
-                    href="/manage-posts-edit?id=<?= $post['id']; ?>"
+                    href="/manage-posts-edit?id=<?= $post["id"]; ?>"
                     class="btn btn-secondary btn-sm me-2"
                     ><i class="bi bi-pencil"></i
                   ></a>
-                  <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#postDeleteModal-<?= $post['id']; ?>" >
-                    <i class="bi bi-trash"></i>
+                  <!-- Button to trigger delete confirmation modal -->
+                  <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#postDeleteModal-<?php echo $post['id']; ?>">
+                     <i class="bi bi-trash"></i>
                   </button>
 
                   <!-- Modal -->
-                  <div class="modal fade" id="postDeleteModal-<?= $post['id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="postDeleteModal-<?php echo $post['id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -80,7 +85,7 @@
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body text-start">
-                          <p>You're currently trying to delete this post: <?= $post['title']; ?></p>
+                          <p>You're currently trying to delete this post: <?php echo $post['title']; ?></p>
                           <p>This action cannot be reversed.</p>
                         </div>
                         <div class="modal-footer">
@@ -89,20 +94,21 @@
                             method="POST"
                             action="/post/delete"
                             class="d-inline"
-                          >
+                            >
                             <input type="hidden" 
                                 name="post_id"
                                 value="<?= $post["id"]; ?>" />
-                            <button class="btn btn-danger"><i class="bi bi-trash me-2"></i>DELETE</button>
+                              <button class="btn btn-danger"><i class="bi bi-trash me-2"></i>DELETE</button>
                           </form>
                         </div>
                       </div>
                     </div>
                   </div>
+                  <!-- end of modal -->
                 </div>
               </td>
             </tr>
-            <?php endforeach; ?>
+          <?php endforeach; ?>
           </tbody>
         </table>
       </div>
